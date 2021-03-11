@@ -1,0 +1,1 @@
+Hello I am a sample text. My purpose is to help with your Skip-gram model. Again and again
