@@ -3,6 +3,7 @@
 import argparse
 import numpy as np
 import networkx as nx
+import random
 from gensim.models import Word2Vec
 
 def parser():
@@ -11,8 +12,8 @@ def parser():
                         help='Specifying Input Graph')
     parser.add_argument('--output_emb', nargs='?', default='karate.emb', 
                         help='Output Location')
-    parser.add_argument('--walk_length', type=int, default=40,
-                        help="Walk Length for Random Walk. Default value is 40")
+    parser.add_argument('--walk_length', type=int, default=100,
+                        help="Walk Length for Random Walk. Default value is 100")
     parser.add_argument('--p', type=float, default=1,
                         help='Return Parameter (p). High p => High chances of return. Default value is 1')
     parser.add_argument('--q', type=float, default=1,
@@ -111,8 +112,8 @@ class N2V():
         print('Node2Vec Running..')
         for iter in range(self.paths):
             print("Iteration ", str(iter+1))
-            for node in nodes:
-                walks.append(self.walk(node))
+            index = random.randint(0, len(nodes)-1)
+            walks.append(self.walk(nodes[index]))
         return walks
     
     def walk(self, start):
@@ -139,6 +140,7 @@ class N2V():
         walks = [list(map(str, walk)) for walk in walks]
         model = Word2Vec(walks, size=self.dim, window=self.size, sg=1, iter=self.epochs)
         model.wv.save_word2vec_format(self.output)
+        print("Now run python -m gensim.scripts.word2vec2tensor -i karate.emb -o karate_model_file")
 
 #########################################################################################################
 def make_graph(args):
